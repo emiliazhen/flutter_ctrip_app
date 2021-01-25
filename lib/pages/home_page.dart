@@ -1,4 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_ctrip/dao/home_dao.dart';
+import 'package:flutter_ctrip/model/common_model.dart';
+import 'package:flutter_ctrip/model/home_model.dart';
+import 'package:flutter_ctrip/widget/local_nav.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 const APPBAR_SCROLL_OFFSET = 100;
 class HomePage extends StatefulWidget {
@@ -26,9 +32,30 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  String resultString = '';
+  List<CommonModel> localNavList = [];
+
+  loadData() async{
+    try {
+      HomeModel model = await HomeDao.fetch();
+      setState(() {
+        localNavList = model.localNavList;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  void initState() { 
+    super.initState();
+    loadData();
+  }
+
+  @override
+  Widget build(BuildContext context) { 
     return Scaffold(
+      backgroundColor: Color(0xfff2f2f2),
       body: MediaQuery.removePadding(
         removeTop: true,
         context: context,
@@ -57,12 +84,19 @@ class _HomePageState extends State<HomePage> {
                       },
                     ),
                   ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(7,4,7,4),
+                    child: LocalNav(localNavList: localNavList),
+                  ),
                   Container(
                     child: Column(
                       children: List.generate(50, (index){
                         return Text('A$index');
                       }),
                     ),
+                  ),
+                  Container(
+                    child: Text(resultString)
                   )
                 ],
               ),
@@ -70,6 +104,9 @@ class _HomePageState extends State<HomePage> {
             Opacity(
               opacity: _appBarAlpha,
               child: Container(
+                padding: EdgeInsets.only(
+                  top: 20,
+                ),
                 child: Center(
                   child: Text('首页'),
                 ),
