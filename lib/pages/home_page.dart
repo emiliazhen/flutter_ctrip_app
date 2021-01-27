@@ -1,19 +1,22 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_ctrip/dao/home_dao.dart';
 import 'package:flutter_ctrip/model/common_model.dart';
 import 'package:flutter_ctrip/model/grid_nav_model.dart';
 import 'package:flutter_ctrip/model/home_model.dart';
 import 'package:flutter_ctrip/model/sales_box_model.dart';
+import 'package:flutter_ctrip/pages/search_page.dart';
 import 'package:flutter_ctrip/widget/grid_nav.dart';
 import 'package:flutter_ctrip/widget/loading_container.dart';
 import 'package:flutter_ctrip/widget/local_nav.dart';
 import 'package:flutter_ctrip/widget/sales_box.dart';
+import 'package:flutter_ctrip/widget/search_bar.dart';
 import 'package:flutter_ctrip/widget/sub_nav.dart';
 import 'package:flutter_ctrip/widget/webview.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+
 const APPBAR_SCROLL_OFFSET = 100;
+const SEARCH_BAR_DEFAULT_TEXT = '网红打卡地 景点 酒店 美食';
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -22,6 +25,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   double _appBarAlpha = 0.0;
   bool _isLoading = true;
+  List<CommonModel> bannerList = [];
+  List<CommonModel> localNavList = [];
+  GridNavModel gridNavModel;
+  List<CommonModel> subNavList = [];
+  SalesBoxModel salesBox;
+
   void _onScroll(offset){
     double alpha = offset / APPBAR_SCROLL_OFFSET;
     if(alpha < 0){
@@ -33,13 +42,7 @@ class _HomePageState extends State<HomePage> {
       _appBarAlpha = alpha;
     });
   }
-
-  List<CommonModel> bannerList = [];
-  List<CommonModel> localNavList = [];
-  GridNavModel gridNavModel;
-  List<CommonModel> subNavList = [];
-  SalesBoxModel salesBox;
-
+  
   Future<Null> _handelRefresh() async{
     try {
       HomeModel model = await HomeDao.fetch();
@@ -149,20 +152,49 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget get _appBar {
-    return Opacity(
-      opacity: _appBarAlpha,
-      child: Container(
-        padding: EdgeInsets.only(
-          top: 20,
+    return Column(
+      children: <Widget>[
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0x66000000),Colors.transparent],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter
+            )
+          ),
+          child: Container(
+            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+            height: 80,
+            decoration: BoxDecoration(
+              color: Color.fromARGB((_appBarAlpha * 255).toInt(), 255, 255, 255)
+            ),
+            child: SearchBar(
+              searchBarType: _appBarAlpha > 0.2 ? SearchBarType.homeLight : SearchBarType.home,
+              inputBoxClick: _jumpToSearch,
+              speakClick: _jumpToSpeak,
+              defaultText: SEARCH_BAR_DEFAULT_TEXT,
+              leftButtonClick: (){},
+            ),
+          ),
         ),
-        child: Center(
-          child: Text('首页'),
-        ),
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-        ),
-      ),
+        Container(
+          height: _appBarAlpha > 0.2 ? 0.5 : 0,
+          decoration: BoxDecoration(
+            boxShadow: [BoxShadow(
+              color: Colors.black12,
+              blurRadius: 0.5
+            )]
+          ),
+        )
+      ],
     );
+  }
+
+  void _jumpToSearch(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(hint:SEARCH_BAR_DEFAULT_TEXT)));
+  }
+
+  void _jumpToSpeak(){
+    
   }
 }
