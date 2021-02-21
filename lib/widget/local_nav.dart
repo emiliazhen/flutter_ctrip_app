@@ -15,7 +15,7 @@ class LocalNav extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(6))
       ),
       child: Padding(
-        padding: EdgeInsets.all(7),
+        padding: EdgeInsets.fromLTRB(14, 7, 14, 7),
         child: _items(context),
       ),
     );

@@ -52,11 +52,12 @@ class _TravelPageState extends State<TravelPage> with TickerProviderStateMixin{
 
   @override
   Widget build(BuildContext context) {
+    double _paddomgTop = MediaQuery.of(context).padding.top;
     return Column(
         children: <Widget>[
           Container(
             color: Colors.white,
-            padding: EdgeInsets.only(top:30),
+            padding: EdgeInsets.only(top:_paddomgTop),
             child: TabBar(
               controller: _tabController,
               isScrollable: true,

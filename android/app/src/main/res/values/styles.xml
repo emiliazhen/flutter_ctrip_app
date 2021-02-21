@@ -4,5 +4,16 @@
         <!-- Show a splash screen on the activity. Automatically removed when
              Flutter draws its first frame -->
         <item name="android:windowBackground">@drawable/launch_background</item>
+        <!--设置透明背景-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--全屏即无通知栏-->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
+    <style name="LaunchThemeMain" parent="@android:style/Theme.Black.NoTitleBar">
+        <!-- Show a splash screen on the activity. Automatically removed when
+             Flutter draws its first frame -->
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+
 </resources>

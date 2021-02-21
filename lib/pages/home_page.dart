@@ -68,7 +68,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) { 
-    return  Scaffold(
+    return Scaffold(
       backgroundColor: Color(0xfff2f2f2),
       body: LoadingContainer(
         isLoading: _isLoading,
@@ -100,11 +100,7 @@ class _HomePageState extends State<HomePage> {
   Widget get _listView {
     return ListView(
       children: <Widget>[
-        _banner,
-        Padding(
-          padding: EdgeInsets.fromLTRB(7,4,7,4),
-          child: LocalNav(localNavList: localNavList),
-        ),
+        _bannerLocalNav,
         Padding(
           padding: EdgeInsets.fromLTRB(7,0,7,4),
           child: GridNav(gridNavModel: gridNavModel),
@@ -121,73 +117,84 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget get _banner {
-    return Container(
-      height: 180,
-      child: Swiper(
-        itemCount: bannerList.length,
-        autoplay: true,
-        pagination: SwiperPagination(),
-        itemBuilder: (BuildContext context,int index){
-          CommonModel _bannerItem = bannerList[index];
-          return GestureDetector(
-            onTap: (){
-              Navigator.push(context,
-                MaterialPageRoute(builder: (context) => WebView(
-                  url:_bannerItem.url,
-                  statusBarColor: _bannerItem.statusBarColor,
-                  hideAppBar: _bannerItem.hideAppBar,
-                ))
-              );
-            },
-            child: Image.network(
-              _bannerItem.icon,
-              fit:BoxFit.fill,
-            ),
-          );
-        },
+  Widget get _bannerLocalNav => Stack(
+    children: <Widget>[
+      Padding(
+        padding: EdgeInsets.only(bottom: 36),
+        child: _banner,
       ),
-    );
-  }
+      Positioned(
+        bottom: 4,
+        left: 7,
+        right: 7,
+        child: LocalNav(localNavList: localNavList),
+      )
+    ],
+  );
 
-  Widget get _appBar {
-    return Column(
-      children: <Widget>[
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0x66000000),Colors.transparent],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter
-            )
+  Widget get _banner => Container(
+    height: 180,
+    child: Swiper(
+      itemCount: bannerList.length,
+      autoplay: true,
+      pagination: SwiperPagination(),
+      itemBuilder: (BuildContext context,int index){
+        CommonModel _bannerItem = bannerList[index];
+        return GestureDetector(
+          onTap: (){
+            Navigator.push(context,
+              MaterialPageRoute(builder: (context) => WebView(
+                url:_bannerItem.url,
+                statusBarColor: _bannerItem.statusBarColor,
+                hideAppBar: _bannerItem.hideAppBar,
+              ))
+            );
+          },
+          child: Image.network(
+            _bannerItem.icon,
+            fit:BoxFit.fill,
           ),
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-            height: 80,
-            decoration: BoxDecoration(
-              color: Color.fromARGB((_appBarAlpha * 255).toInt(), 255, 255, 255)
-            ),
-            child: SearchBar(
-              searchBarType: _appBarAlpha > 0.2 ? SearchBarType.homeLight : SearchBarType.home,
-              inputBoxClick: _jumpToSearch,
-              speakClick: _jumpToSpeak,
-              defaultText: SEARCH_BAR_DEFAULT_TEXT,
-              leftButtonClick: (){},
-            ),
+        );
+      },
+    ),
+  );
+
+  Widget get _appBar => Column(
+    children: <Widget>[
+      Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0x66000000),Colors.transparent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter
+          )
+        ),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+          height: 80,
+          decoration: BoxDecoration(
+            color: Color.fromARGB((_appBarAlpha * 255).toInt(), 255, 255, 255)
+          ),
+          child: SearchBar(
+            searchBarType: _appBarAlpha > 0.2 ? SearchBarType.homeLight : SearchBarType.home,
+            inputBoxClick: _jumpToSearch,
+            speakClick: _jumpToSpeak,
+            defaultText: SEARCH_BAR_DEFAULT_TEXT,
+            leftButtonClick: (){},
           ),
         ),
-        Container(
-          height: _appBarAlpha > 0.2 ? 0.5 : 0,
-          decoration: BoxDecoration(
-            boxShadow: [BoxShadow(
-              color: Colors.black12,
-              blurRadius: 0.5
-            )]
-          ),
-        )
-      ],
-    );
-  }
+      ),
+      Container(
+        height: _appBarAlpha > 0.2 ? 0.5 : 0,
+        decoration: BoxDecoration(
+          boxShadow: [BoxShadow(
+            color: Colors.black12,
+            blurRadius: 0.5
+          )]
+        ),
+      )
+    ],
+  );
 
   void _jumpToSearch(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => SearchPage(hint:SEARCH_BAR_DEFAULT_TEXT)));
